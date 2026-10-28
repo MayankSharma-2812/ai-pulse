@@ -7,7 +7,12 @@ export default function Report() {
   useEffect(() => {
     api("/reports/me").then(setReport);
   }, []);
-
+  async function deleteData() {
+    if(confirm("delete your all ans?")) {
+      await api("/reports/me", { method: "DELETE" });
+      api("/reports/me").then(setReport);
+    }
+  }
   if (!report) return <p>Loading…</p>;
   return (
     <div className="card">
@@ -17,6 +22,7 @@ export default function Report() {
       <ul>{report.risks.map((r) => <li key={r}>{r}</li>)}</ul>
       <h3>Next steps</h3>
       <ul>{report.next_steps.map((s) => <li key={s}>{s}</li>)}</ul>
+      <button onClick={deleteData}>Delete my data</button>
     </div>
   );
 }
