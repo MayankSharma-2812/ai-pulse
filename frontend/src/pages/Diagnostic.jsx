@@ -4,15 +4,21 @@ import { api } from "../api.js";
 export default function Diagnostic({ onDone }) {
   const [questions, setQuestions] = useState([]);
   const [answers, setAnswers] = useState({});
+  const[error, setError] = useState("");
 
   useEffect(() => {
     api("/diagnostic/questions").then(setQuestions);
   }, []);
 
   async function submit() {
-    const payload = Object.entries(answers).map(([question_id, answer]) => ({ question_id, answer }));
-    await api("/diagnostic/submit", { method: "POST", body: JSON.stringify({ answers: payload }) });
-    onDone();
+    setError("");
+    try {
+      const payload = Object.entries(answers).map(([question_id, answer]) => ({ question_id, answer }));
+      await api("/diagnostic/submit", { method: "POST", body: JSON.stringify({ answers: payload }) });
+      onDone();
+    } catch (err) {
+      setError(err.message);
+    }
   }
 
   return (
@@ -31,6 +37,7 @@ export default function Diagnostic({ onDone }) {
           )}
         </div>
       ))}
+      {error && <p className="error">{error}</p>}
       <button onClick={submit}>Submit</button>
     </div>
   );

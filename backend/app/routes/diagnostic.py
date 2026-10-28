@@ -35,6 +35,14 @@ def get_questions(m: models.Membership = Depends(current_membership)):
 @router.post("/submit")
 def submit(body: SubmitIn, m: models.Membership = Depends(current_membership), db: Session = Depends(get_db)):
     bank = {q["id"]: q for q in load_questions()}
+    assigned = questions_for(m.job_role, m.seniority)
+    assigned_ids = {q["id"] for q in assigned}
+    submitted_ids = {a.question_id for a in body.answers}
+    if len(submitted_ids) != len(body.answers):
+        raise HTTPException(400, "Duplicate question IDs in submission")
+    if set(submitted_ids) != assigned_ids:
+        raise HTTPException(400, "Submitted questions do not match assigned questions")
+    db.query(models.Response).filter_by(membership_id=m.id).delete()
     for a in body.answers:
         q = bank.get(a.question_id)
         if not q:

@@ -51,3 +51,4 @@ def test_multi_org_user_dashboard_access(client):
     bp_org_id = next(o["org_id"] for o in bp_data["organizations"] if o["org_name"] == "Bluepeak Retail")
     r_bp=client.get(f"/dashboard?org_id={bp_org_id}", headers=bp_headers)
     assert r_bp.status_code == 200
+
