@@ -30,6 +30,7 @@ def my_report(m: models.Membership = Depends(current_membership), db: Session = 
         "level": maturity_level(avg),
         "risks": flags,
         "next_steps": NEXT_STEPS.get(m.job_role, NEXT_STEPS["manager"]),
+        "unscored":[r.question_id for r in rows if r.score is None],
     }
 @router.delete("/me")
 def delete_my_data(m: models.Membership = Depends(current_membership), db: Session = Depends(get_db)):

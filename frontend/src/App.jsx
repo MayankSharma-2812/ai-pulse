@@ -13,6 +13,12 @@ export default function App() {
   return (
     <div className="wrap">
       <h1>AI Pulse</h1>
+        {org && org.role !== "admin" && (
+        <p>
+          <button onClick={() => setStep("diagnostic")}>Diagnostic</button>{" "}
+          <button onClick={() => setStep("report")}>My Report</button>
+        </p>
+      )}
       {step === "login" && (
         <Login onDone={(s) => { setSession(s); setStep("org"); }} />
       )}
