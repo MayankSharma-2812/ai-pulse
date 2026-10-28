@@ -8,14 +8,16 @@ def load_questions():
     with open(_PATH) as f:
         return json.load(f)
 
-
+seniority_rank={"junior": 1, "mid": 2, "senior": 3, "lead":4}
 def questions_for(job_role: str, seniority: str):
     """Common questions for everyone + questions for this job role, filtered by seniority."""
     result = []
+    user_rank=seniority_rank.get(seniority, 1)
     for q in load_questions():
         if q["roles"] != ["all"] and job_role not in q["roles"]:
             continue
-        if seniority < q.get("min_seniority", "junior"):
+        min_rank=seniority_rank.get(q.get("min_seniority", "junior"), 1)
+        if user_rank < min_rank:
             continue
         result.append(q)
     return result
